@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eleições 2º Turno: Flávio "Gojo" vs Lula "Sukuna" — Choque de Domínios (TSE Ao Vivo)</title>
+  <meta name="description" content="Painel interativo do 2º Turno das Eleições conectado à API pública EA20 do TSE com tema Jujutsu Kaisen: Flávio Gojo vs Lula Sukuna." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=JetBrains+Mono:wght@500;700;800&family=Space+Grotesk:wght@400;600;700&family=Teko:wght@600;700&display=swap" rel="stylesheet" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="./css/main.css" />
+  <link rel="stylesheet" href="./css/domain-clash.css" />
+  <link rel="stylesheet" href="./css/arena.css" />
+</head>
+<body>
+  <!-- 0. CINEMATIC INTRO SPLASH SCREEN (MANGA PARODY GATE) -->
+  <section id="intro-splash-screen" class="intro-splash-screen" aria-label="Tela de Abertura: Choque de Domínios">
+    <div class="splash-ambient-bg" aria-hidden="true"></div>
+
+    <div class="splash-top-banner">
+      <span>⚡ TRIBUNAL SUPERIOR DE FEITIÇARIA ELEITORAL • 2º TURNO ⚡</span>
+    </div>
+
+    <div class="splash-artwork-frame">
+      <img
+        src="./assets/images/intro-clash.jpg"
+        alt="Arte do Mangá Jujutsu Kaisen: Flávio Gojo vs Lula Sukuna no Santuário Malevolente"
+        class="splash-artwork-img"
+      />
+      <div class="splash-corner-tag left-gojo">
+        🔵 FLÁVIO "GOJO" BOLSONARO • Nº 22 (VAZIO INFINITO)
+      </div>
+      <div class="splash-corner-tag right-sukuna">
+        🔴 LULA "SUKUNA" DA SILVA • Nº 13 (SANTUÁRIO MALEVOLENTE)
+      </div>
+    </div>
+
+    <div class="splash-hud-dock">
+      <h2 class="splash-main-title">FLÁVIO "GOJO" vs LULA "SUKUNA"</h2>
+      <p class="splash-subtitle">
+        “O Mais Forte de Hoje vs O Mais Forte da História — A Batalha Final das Urnas!”
+      </p>
+
+      <div class="splash-live-score-pill">
+        <span id="splash-gojo-pct" class="splash-score-gojo">🔵 FLÁVIO GOJO: 50,80%</span>
+        <span class="splash-score-vs">⚡ KOKUSEN VS ⚡</span>
+        <span id="splash-sukuna-pct" class="splash-score-sukuna">LULA SUKUNA: 49,20% 🔴</span>
+      </div>
+
+      <div class="splash-cta-row">
+        <button id="btn-enter-domain" type="button" class="btn-enter-domain">
+          ⚔️ EXPANDIR DOMÍNIO • ENTRAR NA APURAÇÃO AO VIVO
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Arena Background & Cursed Energy Canvas -->
+  <div class="arena-backdrop" aria-hidden="true"></div>
+  <div class="arena-vignette" aria-hidden="true"></div>
+  <canvas id="cursed-particles-canvas" aria-hidden="true"></canvas>
+
+  <div class="app-shell">
+    <!-- 1. TOP BROADCAST HEADER (TSE OFFICIAL TELEMETRY) -->
+    <header class="tse-broadcast-header">
+      <div class="brand-cluster">
+        <div class="tse-crest" title="Tribunal Superior de Feitiçaria Eleitoral">⚔️</div>
+        <div class="brand-titles">
+          <h1>Eleições 2º Turno • Flávio Gojo vs Lula Sukuna</h1>
+          <div class="brand-subtitle">
+            <span id="operation-mode-badge" class="badge-pill live">
+              <span class="pulse-dot"></span>
+              <span id="operation-mode-text">📡 API OFICIAL TSE • 2º TURNO</span>
+            </span>
+            <span id="tse-source-layer-badge">Sincronizando CDN TSE...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Urnas Apuradas -->
+      <div class="urnas-telemetry-center">
+        <div class="urnas-top-row">
+          <span class="urnas-label">Seções / Urnas Totalizadas</span>
+          <span id="urnas-pct-display" class="urnas-pct-value">99,16%</span>
+        </div>
+        <div class="urnas-progress-track">
+          <div id="urnas-progress-fill" class="urnas-progress-fill"></div>
+        </div>
+        <div class="urnas-meta-sub">
+          <span id="urnas-secoes-display">Seções: 468.120 / 472.075</span>
+          <span id="tse-timestamp-display">Atualizado: 25/10/2026 às 20:15:42</span>
+        </div>
+      </div>
+
+      <!-- Right Controls: Scope, Pleito, Swap, Customize, Splash -->
+      <div class="header-controls-right">
+        <button id="btn-reopen-splash" type="button" class="tse-btn swap-btn" title="Reabrir a Tela de Abertura do Mangá">
+          🎬 Tela de Abertura
+        </button>
+
+        <select id="pleito-select" class="tse-select" aria-label="Selecionar Pleito TSE">
+          <option value="2026_OFICIAL">🗳️ Pleito 2026 (2º Turno: Flávio Gojo vs Lula Sukuna)</option>
+          <option value="2022_LIVE">📡 CDN TSE Consolidado (2º Turno Real EA20)</option>
+        </select>
+
+        <select id="scope-select" class="tse-select" aria-label="Selecionar Abrangência 2º Turno">
+          <!-- Populated dynamically by app.js -->
+        </select>
+
+        <button id="btn-sync-tse" type="button" class="tse-btn primary-sync" title="Buscar dados na API Oficial do TSE agora">
+          🔄 Sincronizar TSE
+        </button>
+
+        <button id="btn-swap-fighters" type="button" class="tse-btn swap-btn" title="Inverter lados na Arena">
+          ⇄ Inverter Lados
+        </button>
+
+        <button id="btn-open-customize" type="button" class="tse-btn" title="Editar nomes e partidos dos candidatos">
+          ✏️ Candidatos
+        </button>
+      </div>
+    </header>
+
+    <!-- 2. CENTRAL DOMAIN CLASH POWER BAR (CABO DE GUERRA DE VOTOS VÁLIDOS) -->
+    <section class="domain-clash-section" aria-label="Barra Central de Choque de Poder do 2º Turno">
+      <div class="clash-header-row">
+        <div class="clash-side-stat left">
+          <span id="clash-left-pct" class="clash-side-pct">50,80%</span>
+          <span id="clash-left-name" class="clash-side-name">Flávio "Gojo" Bolsonaro</span>
+        </div>
+
+        <div class="clash-center-title">
+          <span class="kanji-sub">領域展開 • CHOQUE DE EXPANSÃO DE DOMÍNIO</span>
+          <h2>CABO DE GUERRA DOS VOTOS VÁLIDOS (2º TURNO)</h2>
+        </div>
+
+        <div class="clash-side-stat right">
+          <span id="clash-right-pct" class="clash-side-pct">49,20%</span>
+          <span id="clash-right-name" class="clash-side-name">Lula "Sukuna" da Silva</span>
+        </div>
+      </div>
+
+      <!-- Tug-of-War Bar -->
+      <div class="clash-bar-outer">
+        <div class="clash-bar-inner-clip">
+          <div class="clash-fill-gojo"></div>
+          <div class="clash-fill-sukuna"></div>
+        </div>
+
+        <!-- 50% Majority Threshold Marker -->
+        <div class="majority-50-marker">
+          <span class="majority-50-label">50,00% MAIORIA</span>
+        </div>
+
+        <!-- Central Collision Singularity Orb (Kokusen / Hollow Purple vs Shrine) -->
+        <div class="clash-collision-orb" aria-hidden="true">
+          <div class="orb-sparks"></div>
+          <div class="orb-shockwave"></div>
+          <div class="orb-core"></div>
+        </div>
+      </div>
+
+      <div class="clash-sub-footer">
+        <span>👈 Quanto maior o lado Azul, mais forte e feliz fica <strong>Flávio "Gojo" Bolsonaro</strong></span>
+        <span id="clash-dominance-pill" class="domain-dominance-pill">
+          🔵 VAZIO INFINITO AVANÇA
+        </span>
+        <span>Quanto maior o lado Vermelho, mais forte e feliz fica <strong>Lula "Sukuna" da Silva</strong> 👉</span>
+      </div>
+    </section>
+
+    <!-- 4. MAIN ARENA STAGE: FLÁVIO GOJO (LEFT) VS LULA SUKUNA (RIGHT) -->
+    <main class="battle-stage">
+      <!-- LEFT COMBATANT: FLÁVIO "GOJO" BOLSONARO -->
+      <article id="gojo-fighter-card" class="fighter-card gojo-card" data-battle-state="winning">
+        <div class="fighter-aura-backdrop" aria-hidden="true"></div>
+
+        <div class="fighter-top-bar">
+          <span id="gojo-cand-number" class="candidate-number-badge">Nº 22</span>
+          <div class="mood-state-badge">
+            <span id="gojo-mood-emoji" class="mood-emoji">😁⚡</span>
+            <span id="gojo-mood-label">LIDERANDO • FELIZ &amp; FORTE</span>
+          </div>
+        </div>
+
+        <!-- Dual Cross-Fade Portrait (Happy/Strong vs Sad/Weak) -->
+        <div class="portrait-stage">
+          <span id="gojo-technique-tag" class="domain-technique-tag">
+            Muryokusho: Vazio Infinito
+          </span>
+          <span id="gojo-expression-pill" class="expression-indicator-pill">
+            😁⚡ Confiante &amp; Sorrindo
+          </span>
+
+          <img
+            id="gojo-img-happy"
+            src="./assets/images/gojo-happy.jpg"
+            alt="Flávio Gojo Feliz e Forte dominando a apuração"
+            class="portrait-img is-active"
+          />
+          <img
+            id="gojo-img-sad"
+            src="./assets/images/gojo-sad.jpg"
+            alt="Flávio Gojo Triste e Enfraquecido perdendo na apuração"
+            class="portrait-img is-hidden"
+          />
+
+          <div id="gojo-quote-text" class="quote-overlay-bar">
+            “Fica tranquilo, pessoal! A barreira do Infinito está segurando tudo e estamos na frente!”
+          </div>
+        </div>
+
+        <!-- Candidate Electoral Identity & Votes -->
+        <div class="fighter-info-block">
+          <div class="fighter-title-row">
+            <h3 class="sorcerer-name">Flávio "Gojo"</h3>
+            <span class="badge-pill live">Vazio Infinito (Azul/Roxo)</span>
+          </div>
+
+          <div class="real-candidate-subtitle">
+            <span id="gojo-real-name">FLÁVIO "GOJO" BOLSONARO</span>
+            <span id="gojo-real-party" class="real-candidate-party">PL • Clã Gojo do Vazio Infinito</span>
+          </div>
+
+          <div class="fighter-votes-panel">
+            <div id="gojo-pct-giant" class="fighter-pct-giant">50,80%</div>
+            <div class="fighter-abs-votes">
+              <span id="gojo-abs-votes" class="votes-num">60.224.595</span>
+              <span class="votes-lbl">Votos Válidos Computados</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cursed Energy Strength Bar -->
+        <div class="cursed-power-meter">
+          <div class="power-meter-header">
+            <span>Nível de Força &amp; Energia Amaldiçoada</span>
+            <span id="gojo-power-pct">53% PODER</span>
+          </div>
+          <div class="power-meter-track">
+            <div id="gojo-power-fill" class="power-meter-fill" style="width: 53%"></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- CENTER VERSUS PILLAR -->
+      <div class="versus-center-pillar">
+        <div class="vs-emblem-circle">
+          <span class="vs-kanji">決戦</span>
+          <span class="vs-letters">VS</span>
+        </div>
+
+        <div class="clash-leader-callout">
+          <div class="callout-title">Liderança Atual no 2º Turno</div>
+          <div id="vs-leader-name" class="callout-winner">FLÁVIO GOJO LIDERANDO</div>
+          <div id="vs-vote-diff" class="callout-diff">Diferença: 1.896.837 votos</div>
+        </div>
+      </div>
+
+      <!-- RIGHT COMBATANT: LULA "SUKUNA" DA SILVA -->
+      <article id="sukuna-fighter-card" class="fighter-card sukuna-card" data-battle-state="losing">
+        <div class="fighter-aura-backdrop" aria-hidden="true"></div>
+
+        <div class="fighter-top-bar">
+          <span id="sukuna-cand-number" class="candidate-number-badge">Nº 13</span>
+          <div class="mood-state-badge">
+            <span id="sukuna-mood-emoji" class="mood-emoji">😖💢</span>
+            <span id="sukuna-mood-label">EM DESVANTAGEM • TRISTE &amp; FRUSTRADO</span>
+          </div>
+        </div>
+
+        <!-- Dual Cross-Fade Portrait (Happy/Strong vs Sad/Weak) -->
+        <div class="portrait-stage">
+          <span id="sukuna-technique-tag" class="domain-technique-tag">
+            Fukuma Mizushi: Santuário Malevolente
+          </span>
+          <span id="sukuna-expression-pill" class="expression-indicator-pill">
+            😖💢 Irritado &amp; Enfraquecido
+          </span>
+
+          <img
+            id="sukuna-img-happy"
+            src="./assets/images/sukuna-happy.jpg"
+            alt="Lula Sukuna Feliz e Forte dominando a apuração"
+            class="portrait-img is-hidden"
+          />
+          <img
+            id="sukuna-img-sad"
+            src="./assets/images/sukuna-sad.jpg"
+            alt="Lula Sukuna Triste e Enfraquecido perdendo na apuração"
+            class="portrait-img is-active"
+          />
+
+          <div id="sukuna-quote-text" class="quote-overlay-bar">
+            “Mas que barbaridade... Esse Vazio Infinito do Flávio Gojo está bloqueando meus cortes!”
+          </div>
+        </div>
+
+        <!-- Candidate Electoral Identity & Votes -->
+        <div class="fighter-info-block">
+          <div class="fighter-title-row">
+            <h3 class="sorcerer-name">Lula "Sukuna"</h3>
+            <span class="badge-pill sim">Santuário Malevolente (Carmesim)</span>
+          </div>
+
+          <div class="real-candidate-subtitle">
+            <span id="sukuna-real-name">LULA "SUKUNA" DA SILVA</span>
+            <span id="sukuna-real-party" class="real-candidate-party">PT • Santuário Malevolente Carmesim</span>
+          </div>
+
+          <div class="fighter-votes-panel">
+            <div id="sukuna-pct-giant" class="fighter-pct-giant">49,20%</div>
+            <div class="fighter-abs-votes">
+              <span id="sukuna-abs-votes" class="votes-num">58.327.758</span>
+              <span class="votes-lbl">Votos Válidos Computados</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cursed Energy Strength Bar -->
+        <div class="cursed-power-meter">
+          <div class="power-meter-header">
+            <span>Nível de Força &amp; Energia Amaldiçoada</span>
+            <span id="sukuna-power-pct">47% PODER</span>
+          </div>
+          <div class="power-meter-track">
+            <div id="sukuna-power-fill" class="power-meter-fill" style="width: 47%"></div>
+          </div>
+        </div>
+      </article>
+    </main>
+
+    <!-- 5. OFFICIAL TSE TELEMETRY FOOTER -->
+    <footer class="tse-telemetry-grid" aria-label="Estatísticas Gerais da Eleição (TSE)">
+      <div class="telemetry-card">
+        <span class="t-label">Total de Votos Válidos</span>
+        <span id="tele-validos-val" class="t-val">118.552.353</span>
+        <span id="tele-validos-pct" class="t-sub">95,62% dos votos totais</span>
+      </div>
+
+      <div class="telemetry-card">
+        <span class="t-label">Votos em Branco</span>
+        <span id="tele-brancos-val" class="t-val">1.712.040</span>
+        <span id="tele-brancos-pct" class="t-sub">1,38% em branco</span>
+      </div>
+
+      <div class="telemetry-card">
+        <span class="t-label">Votos Nulos</span>
+        <span id="tele-nulos-val" class="t-val">3.716.019</span>
+        <span id="tele-nulos-pct" class="t-sub">3,00% nulos</span>
+      </div>
+
+      <div class="telemetry-card">
+        <span class="t-label">Comparecimento às Urnas</span>
+        <span id="tele-comp-val" class="t-val">123.980.412</span>
+        <span id="tele-comp-pct" class="t-sub">79,91% de comparecimento</span>
+      </div>
+
+      <div class="telemetry-card">
+        <span class="t-label">Abstenção Eleitoral</span>
+        <span id="tele-abst-val" class="t-val">31.159.798</span>
+        <span id="tele-abst-pct" class="t-sub">20,09% de abstenção</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- MODAL: CUSTOMIZE CANDIDATES MAPPED TO GOJO & SUKUNA -->
+  <div id="customize-modal" class="modal-backdrop" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title-custom">
+      <div class="modal-header">
+        <h3 id="modal-title-custom">⚔️ Personalizar Candidatos (Gojo vs Sukuna)</h3>
+        <button id="btn-close-modal" type="button" class="tse-btn">✕</button>
+      </div>
+
+      <form id="customize-form">
+        <div class="modal-form-grid">
+          <div class="fighter-config-box gojo-box">
+            <h4>🔵 Avatar Flávio Gojo (Lado Esquerdo)</h4>
+            <div class="form-field">
+              <label for="input-gojo-nome">Nome do Candidato</label>
+              <input id="input-gojo-nome" type="text" required />
+            </div>
+            <div class="form-field">
+              <label for="input-gojo-numero">Número na Urna</label>
+              <input id="input-gojo-numero" type="text" required />
+            </div>
+            <div class="form-field">
+              <label for="input-gojo-partido">Partido / Coligação</label>
+              <input id="input-gojo-partido" type="text" required />
+            </div>
+          </div>
+
+          <div class="fighter-config-box sukuna-box">
+            <h4>🔴 Avatar Lula Sukuna (Lado Direito)</h4>
+            <div class="form-field">
+              <label for="input-sukuna-nome">Nome do Candidato</label>
+              <input id="input-sukuna-nome" type="text" required />
+            </div>
+            <div class="form-field">
+              <label for="input-sukuna-numero">Número na Urna</label>
+              <input id="input-sukuna-numero" type="text" required />
+            </div>
+            <div class="form-field">
+              <label for="input-sukuna-partido">Partido / Coligação</label>
+              <input id="input-sukuna-partido" type="text" required />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="btn-cancel-modal" type="button" class="tse-btn">Cancelar</button>
+          <button type="submit" class="tse-btn primary-sync">💾 Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main ES Module Script -->
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

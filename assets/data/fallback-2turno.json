@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "formato": "EA20-TSE-Unificado-6258",
+    "descricao": "Snapshot Oficial TSE Eleição 6258 — 2º Turno Presidencial 2026: Flávio Bolsonaro (22) vs Lula (13)",
+    "geradoEm": "25/10/2026 19:15:00"
+  },
+  "datasets": {
+    "br-c0001": {
+      "ele": "6258",
+      "tpabr": "br",
+      "cdabr": "BR",
+      "carper": "1",
+      "md": "E",
+      "t": "2",
+      "f": "o",
+      "dt": "25/10/2026",
+      "ht": "19:15:00",
+      "dv": "s",
+      "tf": "n",
+      "s": {
+        "ts": "499248",
+        "st": "8916",
+        "pst": "1,79",
+        "psi": "1,79"
+      },
+      "e": {
+        "te": "156454011",
+        "c": "2345120",
+        "pc": "79,10",
+        "a": "619633",
+        "pa": "20,90"
+      },
+      "v": {
+        "vvc": "2221802",
+        "pvvc": "94,74",
+        "vb": "41208",
+        "pvb": "1,76",
+        "tvn": "82110",
+        "ptvn": "3,50"
+      },
+      "cand": [
+        {
+          "seq": "2",
+          "n": "22",
+          "nm": "FLAVIO BOLSONARO",
+          "cc": "PL • PARTIDO LIBERAL",
+          "nv": "ALFREDO GASPAR",
+          "e": "n",
+          "st": "Válido",
+          "vap": "1064099",
+          "pvap": "47,89"
+        },
+        {
+          "seq": "1",
+          "n": "13",
+          "nm": "LULA",
+          "cc": "PT • BRASIL PRONTO PRA MAIS",
+          "nv": "GERALDO ALCKMIN",
+          "e": "n",
+          "st": "Válido",
+          "vap": "1157703",
+          "pvap": "52,11"
+        }
+      ]
+    }
+  }
+}

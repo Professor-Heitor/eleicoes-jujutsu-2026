@@ -1,0 +1,546 @@
+/* ==========================================================================
+   ARENA DE BATALHA JUJUTSU — COMBATENTES & 5 ESTADOS EMOCIONAIS/FORÇA
+   ========================================================================== */
+
+.battle-stage {
+  display: grid;
+  grid-template-columns: 1fr 180px 1fr;
+  align-items: stretch;
+  gap: 16px;
+  position: relative;
+  min-height: 520px;
+}
+
+/* Fighter Card Container */
+.fighter-card {
+  position: relative;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(12, 15, 30, 0.88) 0%, rgba(6, 8, 18, 0.95) 100%);
+  border: 1px solid var(--border-subtle);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  transition:
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.55s ease,
+    border-color 0.45s ease,
+    filter 0.55s ease;
+}
+
+.fighter-card.gojo-card {
+  transform: scale(var(--gojo-scale));
+  border-color: rgba(0, 242, 254, 0.4);
+  box-shadow:
+    0 16px 45px rgba(0, 0, 0, 0.75),
+    0 0 var(--gojo-glow) rgba(0, 242, 254, 0.35),
+    inset 0 0 calc(var(--gojo-glow) * 0.5) rgba(0, 102, 255, 0.16);
+}
+
+.fighter-card.sukuna-card {
+  transform: scale(var(--sukuna-scale));
+  border-color: rgba(255, 8, 68, 0.4);
+  box-shadow:
+    0 16px 45px rgba(0, 0, 0, 0.75),
+    0 0 var(--sukuna-glow) rgba(255, 8, 68, 0.35),
+    inset 0 0 calc(var(--sukuna-glow) * 0.5) rgba(220, 38, 38, 0.16);
+}
+
+/* Ambient Cursed Aura Backlight inside Card */
+.fighter-aura-backdrop {
+  position: absolute;
+  inset: -25%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.45;
+  transition: opacity 0.5s ease, transform 0.6s ease;
+}
+
+.gojo-card .fighter-aura-backdrop {
+  background: radial-gradient(circle at 50% 38%, rgba(0, 242, 254, 0.36), rgba(147, 51, 234, 0.2) 45%, transparent 70%);
+  animation: auraRotate 12s linear infinite;
+}
+
+.sukuna-card .fighter-aura-backdrop {
+  background: radial-gradient(circle at 50% 38%, rgba(255, 8, 68, 0.38), rgba(255, 106, 0, 0.2) 45%, transparent 70%);
+  animation: auraRotate 12s linear infinite reverse;
+}
+
+@keyframes auraRotate {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.08); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Top Identity & Mood Status Row */
+.fighter-top-bar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.candidate-number-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 0.86rem;
+}
+
+.gojo-card .candidate-number-badge {
+  background: rgba(0, 242, 254, 0.14);
+  border: 1px solid rgba(0, 242, 254, 0.5);
+  color: var(--gojo-cyan);
+}
+
+.sukuna-card .candidate-number-badge {
+  background: rgba(255, 8, 68, 0.14);
+  border: 1px solid rgba(255, 8, 68, 0.5);
+  color: #fda4af;
+}
+
+/* Emotional & Power State Pill */
+.mood-state-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 13px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.45);
+  transition: all 0.35s ease;
+}
+
+.mood-emoji {
+  font-size: 1.15rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.4));
+}
+
+/* Portrait Stage with Dual Cross-Fade (Happy/Strong vs Sad/Weak) */
+.portrait-stage {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 295px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.16);
+  background: #050711;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
+}
+
+.gojo-card .portrait-stage {
+  filter: saturate(var(--gojo-sat)) brightness(var(--gojo-bright));
+  border-color: rgba(0, 242, 254, 0.55);
+}
+
+.sukuna-card .portrait-stage {
+  filter: saturate(var(--sukuna-sat)) brightness(var(--sukuna-bright));
+  border-color: rgba(255, 8, 68, 0.55);
+}
+
+.portrait-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.portrait-img.is-hidden {
+  opacity: 0;
+  transform: scale(0.96);
+  pointer-events: none;
+}
+
+.portrait-img.is-active {
+  opacity: 1;
+  transform: scale(1.03);
+}
+
+/* Domain Overlay Banner inside Portrait */
+.domain-technique-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 4;
+  padding: 5px 11px;
+  border-radius: 8px;
+  background: rgba(4, 6, 16, 0.82);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.gojo-card .domain-technique-tag {
+  color: var(--gojo-cyan);
+  border-color: rgba(0, 242, 254, 0.5);
+}
+
+.sukuna-card .domain-technique-tag {
+  color: #ff6a00;
+  border-color: rgba(255, 8, 68, 0.5);
+}
+
+/* Facial Expression Live Indicator Overlay */
+.expression-indicator-pill {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 4;
+  padding: 5px 11px;
+  border-radius: 8px;
+  background: rgba(4, 6, 16, 0.86);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  font-size: 0.72rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Speech Quote Bubble at Bottom of Portrait */
+.quote-overlay-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  padding: 26px 14px 11px;
+  background: linear-gradient(180deg, transparent 0%, rgba(3, 4, 12, 0.88) 45%, rgba(3, 4, 12, 0.98) 100%);
+  font-size: 0.83rem;
+  font-style: italic;
+  font-weight: 600;
+  color: #f1f5f9;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
+}
+
+/* Candidate Info & Electoral Numbers */
+.fighter-info-block {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fighter-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.sorcerer-name {
+  font-family: var(--font-title);
+  font-size: 1.32rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.gojo-card .sorcerer-name {
+  color: var(--gojo-cyan);
+  text-shadow: 0 0 16px rgba(0, 242, 254, 0.45);
+}
+
+.sukuna-card .sorcerer-name {
+  color: var(--sukuna-crimson);
+  text-shadow: 0 0 16px rgba(255, 8, 68, 0.45);
+}
+
+.real-candidate-subtitle {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.real-candidate-party {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Vote Percentage & Raw Votes Display inside Card */
+.fighter-votes-panel {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(4, 6, 15, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.fighter-pct-giant {
+  font-family: var(--font-display);
+  font-size: 3.1rem;
+  line-height: 0.9;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.gojo-card .fighter-pct-giant {
+  color: var(--gojo-cyan);
+  text-shadow: 0 0 22px rgba(0, 242, 254, 0.55);
+}
+
+.sukuna-card .fighter-pct-giant {
+  color: var(--sukuna-crimson);
+  text-shadow: 0 0 22px rgba(255, 8, 68, 0.55);
+}
+
+.fighter-abs-votes {
+  text-align: right;
+  font-family: var(--font-mono);
+}
+
+.fighter-abs-votes .votes-num {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+  display: block;
+}
+
+.fighter-abs-votes .votes-lbl {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* Cursed Energy Power Meter (Shows how strong the candidate currently is) */
+.cursed-power-meter {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.power-meter-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.power-meter-track {
+  width: 100%;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.power-meter-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gojo-card .power-meter-fill {
+  background: var(--gojo-gradient);
+  box-shadow: 0 0 14px var(--gojo-cyan);
+}
+
+.sukuna-card .power-meter-fill {
+  background: var(--sukuna-gradient);
+  box-shadow: 0 0 14px var(--sukuna-crimson);
+}
+
+/* ==========================================================================
+   5 DYNAMIC EMOTIONAL & POWER STATES
+   ========================================================================== */
+
+/* 1. SUPREME DOMAIN (>= 55%): Maximum Happiness, Godlike Aura */
+.fighter-card[data-battle-state="supreme"] .mood-state-badge {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(251, 191, 36, 0.3));
+  border-color: #fbbf24;
+  color: #fef08a;
+  box-shadow: 0 0 22px rgba(251, 191, 36, 0.55);
+}
+
+.fighter-card[data-battle-state="supreme"] .portrait-stage {
+  animation: supremePulse 2.2s infinite ease-in-out;
+}
+
+@keyframes supremePulse {
+  0%, 100% { box-shadow: 0 0 25px rgba(255, 255, 255, 0.35); }
+  50% { box-shadow: 0 0 48px rgba(251, 191, 36, 0.75); }
+}
+
+/* 2. WINNING (50.5% to 54.99%): Happy, Confident, Strong */
+.fighter-card[data-battle-state="winning"] .mood-state-badge {
+  background: rgba(16, 185, 129, 0.22);
+  border-color: #34d399;
+  color: #6ee7b7;
+}
+
+/* 3. CLASH TIE (49.5% to 50.5%): Extreme Tension Kokusen */
+.fighter-card[data-battle-state="clash"] .mood-state-badge {
+  background: rgba(217, 70, 239, 0.25);
+  border-color: #e879f9;
+  color: #f5d0fe;
+}
+
+/* 4. LOSING (45.01% to 49.49%): Sad, Pressured, Weakening */
+.fighter-card[data-battle-state="losing"] .mood-state-badge {
+  background: rgba(245, 158, 11, 0.2);
+  border-color: #f59e0b;
+  color: #fde68a;
+}
+
+.fighter-card[data-battle-state="losing"] {
+  opacity: 0.92;
+}
+
+/* 5. COLLAPSED (<= 45%): Devastated, Exhausted, Domain Broken */
+.fighter-card[data-battle-state="collapsed"] .mood-state-badge {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #ef4444;
+  color: #fca5a5;
+}
+
+.fighter-card[data-battle-state="collapsed"] {
+  opacity: 0.84;
+}
+
+.fighter-card[data-battle-state="collapsed"] .portrait-stage {
+  animation: sadTremble 3.5s infinite ease-in-out;
+}
+
+@keyframes sadTremble {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px) translateY(1px); }
+  75% { transform: translateX(2px) translateY(1px); }
+}
+
+/* Center Versus Pillar */
+.versus-center-pillar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  position: relative;
+  z-index: 4;
+}
+
+.vs-emblem-circle {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #1e1b4b 0%, #090a14 75%);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 28px rgba(0, 242, 254, 0.45),
+    0 0 28px rgba(255, 8, 68, 0.45),
+    inset 0 0 18px rgba(217, 70, 239, 0.5);
+  animation: vsFloat 3s ease-in-out infinite;
+}
+
+.vs-emblem-circle .vs-kanji {
+  font-size: 0.72rem;
+  color: #e879f9;
+  letter-spacing: 0.14em;
+  font-weight: 800;
+}
+
+.vs-emblem-circle .vs-letters {
+  font-family: var(--font-title);
+  font-size: 1.75rem;
+  font-weight: 900;
+  background: linear-gradient(90deg, #00f2fe, #ffffff, #ff0844);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes vsFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-6px) scale(1.05); }
+}
+
+.clash-leader-callout {
+  background: rgba(8, 10, 24, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 10px 12px;
+  text-align: center;
+  width: 100%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+.clash-leader-callout .callout-title {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.clash-leader-callout .callout-winner {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--gold-accent);
+}
+
+.clash-leader-callout .callout-diff {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+  margin-top: 3px;
+}
+
+@media (max-width: 1080px) {
+  .battle-stage {
+    grid-template-columns: 1fr;
+  }
+  .versus-center-pillar {
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 6px 0;
+  }
+  .clash-leader-callout {
+    max-width: 280px;
+  }
+}

@@ -1,0 +1,281 @@
+/* ==========================================================================
+   BARRA CENTRAL DE CHOQUE DE PODER (DOMAIN CLASH TUG-OF-WAR)
+   ========================================================================== */
+
+.domain-clash-section {
+  background: linear-gradient(180deg, rgba(11, 14, 29, 0.92) 0%, rgba(6, 8, 19, 0.96) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 18px;
+  padding: 16px 22px 20px;
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.8),
+    0 0 35px rgba(147, 51, 234, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.clash-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.clash-side-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.clash-side-stat.right {
+  flex-direction: row-reverse;
+}
+
+.clash-side-pct {
+  font-family: var(--font-display);
+  font-size: 2.65rem;
+  font-weight: 700;
+  line-height: 0.95;
+}
+
+.clash-side-stat.left .clash-side-pct {
+  color: var(--gojo-cyan);
+  text-shadow: 0 0 20px rgba(0, 242, 254, 0.65);
+}
+
+.clash-side-stat.right .clash-side-pct {
+  color: var(--sukuna-crimson);
+  text-shadow: 0 0 20px rgba(255, 8, 68, 0.65);
+}
+
+.clash-side-name {
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.clash-center-title {
+  text-align: center;
+}
+
+.clash-center-title .kanji-sub {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: #e879f9;
+  text-transform: uppercase;
+  font-weight: 800;
+  display: block;
+}
+
+.clash-center-title h2 {
+  font-family: var(--font-title);
+  font-size: 1.05rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-shadow: 0 0 14px rgba(217, 70, 239, 0.6);
+}
+
+/* Main Tug-of-War Track */
+.clash-bar-outer {
+  position: relative;
+  width: 100%;
+  height: 54px;
+  border-radius: 14px;
+  background: #05050b;
+  border: 2px solid rgba(255, 255, 255, 0.24);
+  box-shadow:
+    inset 0 4px 18px rgba(0, 0, 0, 0.9),
+    0 0 28px rgba(0, 242, 254, 0.25),
+    0 0 28px rgba(255, 8, 68, 0.25);
+  overflow: visible;
+}
+
+.clash-bar-inner-clip {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+}
+
+/* Gojo Left Beam (Muryokusho + Hollow Purple tip) */
+.clash-fill-gojo {
+  width: var(--gojo-share);
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    #031B6E 0%,
+    #0051FF 40%,
+    #00F2FE 82%,
+    #C026D3 96%,
+    #ffffff 100%
+  );
+  background-size: 200% 100%;
+  animation: beamFlowLeft 3.5s linear infinite;
+  position: relative;
+  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 0 30px rgba(0, 242, 254, 0.8);
+}
+
+/* Sukuna Right Beam (Fukuma Mizushi + Cleave/Fuga Flames) */
+.clash-fill-sukuna {
+  flex: 1;
+  height: 100%;
+  background: linear-gradient(
+    270deg,
+    #3B0404 0%,
+    #991B1B 40%,
+    #FF0844 82%,
+    #FF6A00 96%,
+    #ffffff 100%
+  );
+  background-size: 200% 100%;
+  animation: beamFlowRight 3.5s linear infinite;
+  position: relative;
+  box-shadow: 0 0 30px rgba(255, 8, 68, 0.8);
+}
+
+@keyframes beamFlowLeft {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+@keyframes beamFlowRight {
+  0% { background-position: 200% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Energy Scanlines Overlay inside Bar */
+.clash-bar-inner-clip::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.08) 0px,
+    rgba(255, 255, 255, 0.08) 8px,
+    transparent 8px,
+    transparent 16px
+  );
+  pointer-events: none;
+}
+
+/* 50% Constitutional Majority Line Marker */
+.majority-50-marker {
+  position: absolute;
+  left: 50%;
+  top: -8px;
+  bottom: -8px;
+  width: 2px;
+  background: repeating-linear-gradient(
+    180deg,
+    #fbbf24 0px,
+    #fbbf24 5px,
+    transparent 5px,
+    transparent 9px
+  );
+  transform: translateX(-50%);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.majority-50-label {
+  position: absolute;
+  bottom: -21px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--gold-accent);
+  white-space: nowrap;
+  letter-spacing: 0.06em;
+}
+
+/* Collision Singularity Orb (Exact Boundary of Gojo vs Sukuna) */
+.clash-collision-orb {
+  position: absolute;
+  top: 50%;
+  left: var(--gojo-share);
+  transform: translate(-50%, -50%);
+  width: 68px;
+  height: 68px;
+  z-index: 8;
+  pointer-events: none;
+  transition: left 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orb-core {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 0%, #f0abfc 35%, #9333ea 68%, #000000 100%);
+  border: 2px solid #ffffff;
+  box-shadow:
+    0 0 20px #ffffff,
+    0 0 38px #d946ef,
+    -12px 0 28px #00f2fe,
+    12px 0 28px #ff0844;
+  animation: kokusenJitter 0.14s infinite alternate;
+}
+
+.orb-shockwave {
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 255, 255, 0.75);
+  box-shadow: 0 0 18px rgba(217, 70, 239, 0.85);
+  animation: shockwaveSpin 1.8s linear infinite;
+}
+
+.orb-sparks {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0, 242, 254, 0.6);
+  border-right-color: rgba(255, 8, 68, 0.8);
+  animation: shockwaveSpin 0.9s linear infinite reverse;
+}
+
+@keyframes kokusenJitter {
+  0% { transform: scale(0.94) translate(-1px, 1px); }
+  50% { transform: scale(1.08) translate(1px, -1px); }
+  100% { transform: scale(1.0) translate(0px, 0px); }
+}
+
+@keyframes shockwaveSpin {
+  0% { transform: rotate(0deg) scale(0.92); }
+  50% { transform: rotate(180deg) scale(1.08); }
+  100% { transform: rotate(360deg) scale(0.92); }
+}
+
+/* Sub-Bar Status & Vote Advantage Readout */
+.clash-sub-footer {
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.domain-dominance-pill {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-weight: 700;
+  color: #f8fafc;
+}
